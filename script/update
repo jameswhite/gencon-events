@@ -1,0 +1,4 @@
+#!/bin/bash
+wget -O events.xlsx "https://www.gencon.com/downloads/events.xlsx"
+in2csv events.xlsx | csvjson > events.json
+cat events.json | jq . > events.json-clean
