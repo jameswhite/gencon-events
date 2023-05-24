@@ -6,3 +6,9 @@ if [ ${EXIT} -eq 0 ]; then
   in2csv events.xlsx | csvjson > events.json
   cat events.json | jq . > events.json-clean
 fi
+
+TIME_START_EARLIEST='2023-08-03T10:00:00'
+TIME_START_LATEST='2023-08-03T22:00:00'
+
+cat events.json-clean | jq --arg s "${TIME_START_EARLIEST}" --arg e "${TIME_START_LATEST}" '[($s, $e) | strptime("%Y-%m-%dT%H:%M:%S") | mktime] as $r
+  | map(select( (."Start Date & Time"[:19] | strptime("%Y-%m-%dT%H:%M:%S") | mktime) as $d | $d >= $r[0] and $d <= $r[1]))'  | jq -rc '[]'
