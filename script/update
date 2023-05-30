@@ -18,10 +18,10 @@ TIME_START_EARLIEST='2023-08-03T10:00:00'
 TIME_START_LATEST='2023-08-06T22:00:00'
 
 cat events.json-clean | jq --arg s "${TIME_START_EARLIEST}" --arg e "${TIME_START_LATEST}" '[($s, $e) | strptime("%Y-%m-%dT%H:%M:%S") | mktime] as $r
-  | map(select( (."Start Date & Time"[:19] | strptime("%Y-%m-%dT%H:%M:%S") | mktime) as $d | $d >= $r[0] and $d <= $r[1]))'  | jq -rc '.[] | select(."Game System"=="Dungeons & Dragons") | select(."Tickets Available">0)| [."Game System", ."Rules Edition",."Experience Required"]' | sort | uniq -c
+  | map(select( (."Start Date & Time"[:19] | strptime("%Y-%m-%dT%H:%M:%S") | mktime) as $d | $d >= $r[0] and $d <= $r[1]))'  | jq -rc '.[] | select(."Game System"=="Dungeons & Dragons") | select(."Tickets Available">0)| [."Game System", ."Rules Edition",."Experience Required", ."Tickets Available", ."Title" ]' | sort | uniq -c
 
 echo
 
 cat events.json-clean | jq --arg s "${TIME_START_EARLIEST}" --arg e "${TIME_START_LATEST}" '[($s, $e) | strptime("%Y-%m-%dT%H:%M:%S") | mktime] as $r
-  | map(select( (."Start Date & Time"[:19] | strptime("%Y-%m-%dT%H:%M:%S") | mktime) as $d | $d >= $r[0] and $d <= $r[1]))'  | jq -rc '.[] | select(."Game System"=="Dungeons & Dragons") | select(."Tickets Available">0)|select(."Rules Edition"=="Advanced 1st")|select(.Title!="The Tower of Gaxx: Meatgrinder (for charity)")| [."Game System", ."Rules Edition",."Title",."Experience Required"]' | sort 
+  | map(select( (."Start Date & Time"[:19] | strptime("%Y-%m-%dT%H:%M:%S") | mktime) as $d | $d >= $r[0] and $d <= $r[1]))'  | jq -rc '.[] | select(."Game System"=="Dungeons & Dragons") | select(."Tickets Available">0)|select(."Rules Edition"=="Advanced 1st")|select(.Title!="The Tower of Gaxx: Meatgrinder (for charity)")| [."Game System", ."Rules Edition",."Title",."Experience Required"]' | sort
 
