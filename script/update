@@ -12,16 +12,38 @@ if [ ${DIFF} -gt 1800 ]; then
     cat events.json | jq . > events.json-clean
     cat events.json | jq -rc '.[] | ."Game ID"' > game-ids
   fi
+else
+  echo "Using stale file as time has not expired." 1>&2
 fi
 
-TIME_START_EARLIEST='2023-08-03T10:00:00'
-TIME_START_LATEST='2023-08-06T22:00:00'
+TIME_START_EARLIEST='2024-07-31T00:00:00'
+TIME_START_LATEST='2024-08-05T23:59:00'
 
-cat events.json-clean | jq --arg s "${TIME_START_EARLIEST}" --arg e "${TIME_START_LATEST}" '[($s, $e) | strptime("%Y-%m-%dT%H:%M:%S") | mktime] as $r
-  | map(select( (."Start Date & Time"[:19] | strptime("%Y-%m-%dT%H:%M:%S") | mktime) as $d | $d >= $r[0] and $d <= $r[1]))'  | jq -rc '.[] | select(."Game System"=="Dungeons & Dragons") | select(."Tickets Available">0)| [."Game System", ."Rules Edition",."Experience Required", ."Tickets Available", ."Title" ]' | sort | uniq -c
+# cat events.json-clean | jq --arg s "${TIME_START_EARLIEST}" --arg e "${TIME_START_LATEST}" '[($s, $e) | strptime("%Y-%m-%dT%H:%M:%S") | mktime] as $r
+#   | map(select( (."Start Date & Time"[:19] | strptime("%Y-%m-%dT%H:%M:%S") | mktime) as $d | $d >= $r[0] and $d <= $r[1]))'  | jq -rc '.[] | select(."Game System"=="Dungeons & Dragons") | select(."Tickets Available">0)| [."Game System", ."Rules Edition",."Experience Required", ."Tickets Available", ."Title" ]' | sort | uniq -c
+# echo
 
-echo
-
-cat events.json-clean | jq --arg s "${TIME_START_EARLIEST}" --arg e "${TIME_START_LATEST}" '[($s, $e) | strptime("%Y-%m-%dT%H:%M:%S") | mktime] as $r
-  | map(select( (."Start Date & Time"[:19] | strptime("%Y-%m-%dT%H:%M:%S") | mktime) as $d | $d >= $r[0] and $d <= $r[1]))'  | jq -rc '.[] | select(."Game System"=="Dungeons & Dragons") | select(."Tickets Available">0)|select(."Rules Edition"=="Advanced 1st")|select(.Title!="The Tower of Gaxx: Meatgrinder (for charity)")| [."Game System", ."Rules Edition",."Title",."Experience Required"]' | sort
-
+# cat events.json-clean | jq --arg s "${TIME_START_EARLIEST}" --arg e "${TIME_START_LATEST}" '[($s, $e) | strptime("%Y-%m-%dT%H:%M:%S") | mktime] as $r
+#   | map(select( (."Start Date & Time"[:19] | strptime("%Y-%m-%dT%H:%M:%S") | mktime) as $d | $d >= $r[0] and $d <= $r[1]))'  | jq -rc '.[] | select(."Game System"=="Dungeons & Dragons") | select(."Tickets Available">0)|select(."Rules Edition"=="Advanced 1st")|select(.Title!="The Tower of Gaxx: Meatgrinder (for charity)")| [."Game System", ."Rules Edition",."Title",."Experience Required"]' | sort
+# echo
+# cat events.json-clean | jq --arg s "${TIME_START_EARLIEST}" --arg e "${TIME_START_LATEST}" '[($s, $e) | strptime("%Y-%m-%dT%H:%M:%S") | mktime] as $r
+#   | map(select( (."Start Date & Time"[:19] | strptime("%Y-%m-%dT%H:%M:%S") | mktime) as $d | $d >= $r[0] and $d <= $r[1]))'  | jq -rc '.[] | select(."Game System"=="Dungeons & Dragons") | select(."Tickets Available">0)|select(."Rules Edition"=="1st")|select(.Title!="The Tower of Gaxx: Meatgrinder (for charity)")| [."Game System", ."Rules Edition",."Title",."Experience Required"]' | sort
+# echo
+cat events.json-clean | jq --arg s "${TIME_START_EARLIEST}" --arg e "${TIME_START_LATEST}" \
+   '[($s, $e) | strptime("%Y-%m-%dT%H:%M:%S") | mktime] as $r | map(select( (."Start Date & Time"[:19] | strptime("%Y-%m-%dT%H:%M:%S") | mktime) as $d | $d >= $r[0] and $d <= $r[1]))'  | \
+  jq -rc '.[] |
+                select(."Game System"=="Dungeons & Dragons") |
+                select(."Tickets Available">0)|
+                select(."Rules Edition"!="3.5"
+                   and ."Rules Edition"!="4th"
+                   and ."Rules Edition"!="5th"
+                   and ."Rules Edition"!="5th "
+                   and ."Rules Edition"!="5th Animal Adventures"
+                   and ."Rules Edition"!="5"
+                   and ."Rules Edition"!="5e"
+                )|
+                select(.Title!="The Tower of Gaxx: Special Event (for charity)"
+                   and .Title!="The Tower of Gaxx: Meatgrinder (for charity)")
+                | [."Start Date & Time",."End Date & Time",.Duration,
+                   ."Round Number",."Total Rounds",."Title",
+                   ."Game System", ."Rules Edition",."Experience Required"]' | sort
