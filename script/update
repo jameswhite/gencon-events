@@ -36,7 +36,7 @@ cat events.json-clean | jq --arg s "${TIME_START_EARLIEST}" --arg e "${TIME_STAR
                     or ."Game System"=="Marvel Super Heroes"
                     or ."Game System"=="Shadowrun"
                 ) |
-                select(."Tickets Available">0)|
+                select(."Tickets Available">=2)|
                 select(."Rules Edition"!="0")|
                 select(.Title!="The Tower of Gaxx: Special Event (for charity)"
                    and .Title!="The Tower of Gaxx: Meatgrinder (for charity)")
@@ -58,7 +58,7 @@ cat events.json-clean | jq --arg s "${TIME_START_EARLIEST}" --arg e "${TIME_STAR
                 select(
                        ."Game System"=="Dungeons & Dragons"
                       ) |
-                select(."Tickets Available">0)|
+                select(."Tickets Available">=2)|
                 select(
                        ."Rules Edition"!="3.5"
                    and ."Rules Edition"!="4th"
@@ -69,7 +69,9 @@ cat events.json-clean | jq --arg s "${TIME_START_EARLIEST}" --arg e "${TIME_STAR
                    and ."Rules Edition"!="5e"
                 )|
                 select(.Title!="The Tower of Gaxx: Special Event (for charity)"
-                   and .Title!="The Tower of Gaxx: Meatgrinder (for charity)")
+                   and .Title!="The Tower of Gaxx: Meatgrinder (for charity)"
+                   and .Title!="Advanced Dungeons & Dragons Tournament - Scourge of Qehalah"
+                )
                 | [
                     ."Start Date & Time",
                     ."End Date & Time",
@@ -79,5 +81,6 @@ cat events.json-clean | jq --arg s "${TIME_START_EARLIEST}" --arg e "${TIME_STAR
                    ."Game System",
                     ."Rules Edition",
                     ."Title",
-                    ."Experience Required"
+                    ."Experience Required",
+                    ."Tickets Available"
                   ]' | sort
