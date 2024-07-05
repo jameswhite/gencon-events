@@ -39,7 +39,9 @@ cat events.json-clean | jq --arg s "${TIME_START_EARLIEST}" --arg e "${TIME_STAR
                 select(."Tickets Available">=2)|
                 select(."Rules Edition"!="0")|
                 select(.Title!="The Tower of Gaxx: Special Event (for charity)"
-                   and .Title!="The Tower of Gaxx: Meatgrinder (for charity)")
+                   and .Title!="The Tower of Gaxx: Meatgrinder (for charity)"
+                   and .Title!="Advanced Dungeons & Dragons Tournament - Scourge of Qehalah"
+                )
                 | [
                    ."Start Date & Time",
                    ."End Date & Time",
