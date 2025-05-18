@@ -16,8 +16,12 @@ else
   echo "Using stale file as time has not expired." 1>&2
 fi
 
-TIME_START_EARLIEST='2024-07-31T00:00:00'
-TIME_START_LATEST='2024-08-05T23:59:00'
+# TIME_START_EARLIEST='2024-07-31T00:00:00'
+# TIME_START_LATEST='2024-08-05T23:59:00'
+
+TIME_START_EARLIEST='2025-07-31T00:00:00'
+TIME_START_LATEST='2025-08-03T23:59:00'
+
 
 # cat events.json-clean | jq --arg s "${TIME_START_EARLIEST}" --arg e "${TIME_START_LATEST}" '[($s, $e) | strptime("%Y-%m-%dT%H:%M:%S") | mktime] as $r
 #   | map(select( (."Start Date & Time"[:19] | strptime("%Y-%m-%dT%H:%M:%S") | mktime) as $d | $d >= $r[0] and $d <= $r[1]))'  | jq -rc '.[] | select(."Game System"=="Dungeons & Dragons") | select(."Tickets Available">0)| [."Game System", ."Rules Edition",."Experience Required", ."Tickets Available", ."Title" ]' | sort | uniq -c
